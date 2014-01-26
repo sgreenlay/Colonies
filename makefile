@@ -2,11 +2,11 @@ CC=gcc
 CFLAGS=-c -Wall -g
 LDFLAGS=
 
-SOURCES=main.c
+SOURCES=main.c engine/engine.c engine/graphics.c engine/input.c engine/util.c engine/clock.c game/game.c
 OBJECTS=$(SOURCES:.c=.o)
 EXE=ggj14
 
-INCLUDEPATHS=-I/usr/local/include/SDL2/
+INCLUDEPATHS=-I/usr/local/include/SDL2/ -Iengine/inc -Igame/inc
 LIBPATHS=-L/usr/local/lib/
 
 LIBS=-lSDL2
@@ -20,4 +20,4 @@ $(EXE): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDEPATHS) $< -o $@
 
 clean:
-	rm *.o ggj14*
+	rm *.o */*.o ggj14*
