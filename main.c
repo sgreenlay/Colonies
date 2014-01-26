@@ -89,6 +89,8 @@ int main(
         goto exit;
     }
     
+    int image_x = 400 - 25;
+    int image_y = 240 - 25;
     int game_loop = 1;
     
     SDL_Event event;
@@ -119,7 +121,7 @@ int main(
         // TODO: Render game state
         
         SDL_Rect source = { 0, 0, 50, 50 };
-        SDL_Rect destination = { 400 - 25, 240 - 25, 50, 50 };
+        SDL_Rect destination = { image_x, image_y, 50, 50 };
         SDL_RenderCopy(renderer, texture, &source, &destination);
         
         SDL_RenderPresent(renderer);
