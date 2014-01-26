@@ -2,6 +2,11 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 
+#define FRAMES_PER_SECOND 60
+#define MS_PER_FRAME ((int) (1000 / (FRAMES_PER_SECOND)))
+
+#define PIXELS_Y_PER_FRAME  4
+#define PIXELS_X_PER_FRAME  4
 int main(
     int argc,
     char* args[])
@@ -92,9 +97,12 @@ int main(
     int image_x = 400 - 25;
     int image_y = 240 - 25;
     int game_loop = 1;
-    
+	int delta_x = 0;
+	int delta_y = 0;
+
     SDL_Event event;
-    
+	unsigned int start_loop_time = SDL_GetTicks();
+
     while (game_loop) {
         while (SDL_PollEvent(&event) != 0) {
             if (event.type == SDL_QUIT) {
@@ -106,26 +114,53 @@ int main(
                 switch (event.key.keysym.sym)
                 {
                     case SDLK_LEFT:
-                        image_x--;
+						delta_x = -PIXELS_X_PER_FRAME;
                         break;
                     case SDLK_RIGHT:
-                        image_x++;
+						delta_x = PIXELS_X_PER_FRAME;
                         break;
                     case SDLK_UP:
-                        image_y--;
+						delta_y = -PIXELS_Y_PER_FRAME;
                         break;
                     case SDLK_DOWN:
-                        image_y++;
+						delta_y = PIXELS_Y_PER_FRAME;
                         break;
                     default:
-                        printf("Key event: %d\n", event.key.keysym.sym);
+                        printf("KeyDown event: %d\n", event.key.keysym.sym);
                         break;
                 }
             }
+			else if (event.type == SDL_KEYUP)
+				switch (event.key.keysym.sym)
+			{
+				case SDLK_LEFT:
+					delta_x = 0;
+					break;
+				case SDLK_RIGHT:
+					delta_x = 0;
+					break;
+				case SDLK_UP:
+					delta_y = 0;
+					break;
+				case SDLK_DOWN:
+					delta_y = 0;
+					break;
+				default:
+					printf("KeyUp event: %d\n", event.key.keysym.sym);
+					break;
+			}
         }
         
-        // TODO: Update game state
-        
+        // TODO: Update game state -- updating
+		{
+			image_x += delta_x;
+			image_y += delta_y;
+			//TODO: change to contants once we know image size
+			if (image_x > (800 - 50)) image_x = 800 - 50;
+			if (image_y > (480 - 50)) image_y = 480 - 50;
+			if (image_x < 0) image_x = 0;
+			if (image_y < 0) image_y = 0;
+		}
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         
@@ -141,6 +176,13 @@ int main(
         SDL_RenderCopy(renderer, texture, &source, &destination);
         
         SDL_RenderPresent(renderer);
+		unsigned int end_loop_time = SDL_GetTicks();
+		long sleep_time = MS_PER_FRAME - ((long)end_loop_time - start_loop_time);
+		if (sleep_time > 0)
+			SDL_Delay((unsigned int)sleep_time);
+		//printf("%i\n", (unsigned int)sleep_time);
+		start_loop_time = end_loop_time;
+		
     }
     
 
