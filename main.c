@@ -103,8 +103,24 @@ int main(
             }
             else if (event.type == SDL_KEYDOWN)
             {
-                printf("Key event: %d\n", event.key.keysym.sym);
-                break;
+                switch (event.key.keysym.sym)
+                {
+                    case SDLK_LEFT:
+                        image_x--;
+                        break;
+                    case SDLK_RIGHT:
+                        image_x++;
+                        break;
+                    case SDLK_UP:
+                        image_y--;
+                        break;
+                    case SDLK_DOWN:
+                        image_y++;
+                        break;
+                    default:
+                        printf("Key event: %d\n", event.key.keysym.sym);
+                        break;
+                }
             }
         }
         
