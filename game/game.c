@@ -34,7 +34,7 @@ int game_init(game * gm, engine * e)
         return 1;
     }
     
-    if (sprite_init_from_sheet(&gm->m_mouse_sprite, &gm->m_sprites, 51, 0, 50, 50))
+    if (sprite_init_from_sheet(&gm->m_mouse_sprite, &gm->m_sprites, 50, 0, 25, 25))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize mouse sprite\n");
         return 1;
@@ -49,7 +49,7 @@ int game_init(game * gm, engine * e)
         return 1;
     }
     
-    if (sprite_init_from_sheet(&gm->m_object_sprite, &gm->m_sprites, 0, 51, 150, 150))
+    if (sprite_init_from_sheet(&gm->m_object_sprite, &gm->m_sprites, 0, 50, 150, 150))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize object sprite\n");
         return 1;
