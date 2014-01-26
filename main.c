@@ -1,6 +1,6 @@
 
 #define SDL_MAIN_HANDLED
-#include "SDL.h"
+#include <SDL.h>
 
 int main(
     int argc,
@@ -14,15 +14,78 @@ int main(
         goto exit;
     }
     
-    SDL_Window * window = SDL_CreateWindow(
-        "ggj14",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        640, 480,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window * window;
+    SDL_Renderer * renderer;
+    
+    SDL_CreateWindowAndRenderer(
+        800, 480,
+        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI,
+        &window, &renderer);
     
     if (window == NULL)
     {
         printf("Couldn't create window [%s]\n", SDL_GetError());
+        goto exit;
+    }
+    
+    if (renderer == NULL)
+    {
+        printf("Couldn't create renderer [%s]\n", SDL_GetError());
+        goto exit;
+    }
+    
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    SDL_RenderSetLogicalSize(renderer, 800, 480);
+    
+    SDL_Surface * screen;
+    SDL_Rect screenRect = { 0, 0, 800, 480 };
+    
+    Uint32 rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+    
+    screen = SDL_CreateRGBSurface(
+        0, 800, 480, 32,
+        rmask, gmask, bmask, amask);
+    
+    if (screen == NULL)
+    {
+        printf("Couldn't create screen surface [%s]\n", SDL_GetError());
+        goto exit;
+    }
+    
+    SDL_FillRect(screen, &screenRect, SDL_MapRGBA(screen->format, 0x00, 0x00, 0xff, 0xFF));
+    
+    SDL_Texture * screenTexture = SDL_CreateTextureFromSurface(renderer, screen);
+    SDL_FreeSurface(screen);
+    
+    // TODO: Initialize game
+    
+    SDL_Surface * image;
+    image = SDL_LoadBMP("assets/test.bmp");
+    
+    if (image == NULL)
+    {
+        printf("Couldn't load image [%s]\n", SDL_GetError());
+        goto exit;
+    }
+    
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_FreeSurface(image);
+    
+    if (texture == NULL)
+    {
+        printf("Couldn't create texture [%s]\n", SDL_GetError());
         goto exit;
     }
     
@@ -45,10 +108,27 @@ int main(
         
         // TODO: Update game state
         
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        
+        SDL_Rect screenSource = { 0, 0, 800, 480 };
+        SDL_Rect screenDestination = { 0, 0, 800, 480 };
+        
+        SDL_RenderCopy(renderer, screenTexture, &screenSource, &screenDestination);
+        
         // TODO: Render game state
+        
+        SDL_Rect source = { 0, 0, 50, 50 };
+        SDL_Rect destination = { 400 - 25, 240 - 25, 50, 50 };
+        SDL_RenderCopy(renderer, texture, &source, &destination);
+        
+        SDL_RenderPresent(renderer);
     }
+    
 
 exit:
+    // TODO: Destroy game
+    
     SDL_DestroyWindow(window);
     SDL_Quit();
     
