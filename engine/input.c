@@ -63,9 +63,13 @@ int input_poll(input * i)
     return 0;
 }
 
-int input_get_mouse_position(input * i, int * x, int * y)
+int input_get_mouse_state(input * i, int * is_left_down, int * x, int * y)
 {
-    SDL_GetRelativeMouseState(x, y);
+    const Uint8 * keystate = SDL_GetKeyboardState(NULL);
+    
+    *is_left_down = (keystate[SDL_GetScancodeFromKey(SDL_BUTTON_LEFT)] != 0);
+    
+    SDL_GetMouseState(x, y);
     
     return 0;
 }

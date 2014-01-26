@@ -34,6 +34,12 @@ int game_init(game * gm, engine * e)
         return 1;
     }
     
+    if (sprite_init_from_sheet(&gm->m_mouse_sprite, &gm->m_sprites, 51, 0, 50, 50))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize mouse sprite\n");
+        return 1;
+    }
+    
     gm->m_character_x = g->width / 2 - 25;
     gm->m_character_y = g->height / 2 - 25;
     
@@ -75,6 +81,14 @@ int game_update(game * gm, engine * e, unsigned int dt)
         gm->m_character_x += 50.0f * elapsed;
     }
     
+    int mouse_down = 0;
+    
+    if (input_get_mouse_state(i, &mouse_down, &gm->m_mouse_x, &gm->m_mouse_y))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to get mouse state\n");
+        return 1;
+    }
+    
     return 0;
 }
 
@@ -92,6 +106,12 @@ int game_render(game * gm, graphics * g)
     if (sprite_draw(&gm->m_character_sprite, g, x, y))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw character sprite\n");
+        return 1;
+    }
+    
+    if (sprite_draw(&gm->m_mouse_sprite, g, gm->m_mouse_x - 25, gm->m_mouse_y - 25))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw mouse sprite\n");
         return 1;
     }
     
