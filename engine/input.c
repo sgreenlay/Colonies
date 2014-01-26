@@ -53,6 +53,13 @@ int input_poll(input * i)
     return 0;
 }
 
+int input_get_mouse_position(input * i, int * x, int * y)
+{
+    SDL_GetRelativeMouseState(x, y);
+    
+    return 0;
+}
+
 int input_is_key_down(input * i, Key k)
 {
     const Uint8 * keystate = SDL_GetKeyboardState(NULL);

@@ -40,6 +40,33 @@ int graphics_cleanup(graphics * g);
 
 
 // #######################################################################################
+// Sprite Sheet
+// #######################################################################################
+
+typedef struct _sprite_sheet {
+    int width, height;
+
+// private
+    SDL_Texture * m_texture;
+} sprite_sheet;
+
+
+//
+// Constructor
+//
+
+sprite_sheet * create_sprite_sheet();
+
+
+//
+// Methods
+//
+
+int sprite_sheet_init(sprite_sheet * ss, graphics *g, int width, int height, char * path);
+int sprite_sheet_cleanup(sprite_sheet * ss);
+
+
+// #######################################################################################
 // Sprite
 // #######################################################################################
 
@@ -47,6 +74,7 @@ typedef struct _sprite {
     int width, height;
 
 // private
+    int m_offset_x, m_offset_y;
     SDL_Texture * m_texture;
 } sprite;
 
@@ -63,6 +91,7 @@ sprite * create_sprite();
 //
 
 int sprite_init(sprite * s, graphics *g, int width, int height, char * path);
+int sprite_init_from_sheet(sprite * s, sprite_sheet *ss, int x, int y, int width, int height);
 int sprite_draw(sprite * s, graphics * g, int x, int y);
 int sprite_cleanup(sprite * s);
 

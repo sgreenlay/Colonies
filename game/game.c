@@ -28,10 +28,16 @@ int game_init(game * gm, engine * e)
 {
     graphics * g = engine_get_graphics(e);
     
+    if (sprite_sheet_init(&gm->m_sprites, g, 50, 50, "assets/sprites.bmp"))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize sprite sheet\n");
+        return 1;
+    }
+    
     gm->m_character_x = g->width / 2 - 25;
     gm->m_character_y = g->height / 2 - 25;
     
-    if (sprite_init(&gm->m_character_sprite, g, 50, 50, "assets/test.bmp"))
+    if (sprite_init_from_sheet(&gm->m_character_sprite, &gm->m_sprites, 0, 0, 50, 50))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize character sprite\n");
         return 1;
