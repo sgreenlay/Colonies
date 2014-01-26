@@ -26,14 +26,14 @@ input * create_input()
 
 int input_init(input * i)
 {
-    SDL_ShowCursor(0);
+    //SDL_ShowCursor(0);
     
     return 0;
 }
 
 int input_cleanup(input * i)
 {
-    SDL_ShowCursor(1);
+    //SDL_ShowCursor(1);
     
     return 0;
 }

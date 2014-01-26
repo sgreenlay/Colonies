@@ -6,17 +6,12 @@
 #include "graphics.h"
 #include "input.h"
 
+#include "planet.h"
+
 typedef struct _game {
 // private
     sprite_sheet m_sprites;
-    
-    int m_mouse_x, m_mouse_y;
-    sprite m_mouse_sprite;
-    
-    float m_character_x, m_character_y;
-    sprite m_character_sprite;
-    
-    sprite m_object_sprite;
+    planet m_planets[2];
 } game;
 
 

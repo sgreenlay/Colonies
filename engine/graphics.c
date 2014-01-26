@@ -296,6 +296,16 @@ int sprite_draw(sprite * s, graphics *g, int x, int y)
     return 0;
 }
 
+int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, float scale)
+{
+    SDL_Rect source = { s->m_offset_x, s->m_offset_y, s->width, s->height };
+    SDL_Rect destination = { x, y, s->width * scale, s->height * scale };
+    
+    SDL_RenderCopy(g->m_renderer, s->m_texture, &source, &destination);
+    
+    return 0;
+}
+
 int sprite_cleanup(sprite * s)
 {
     if (s->m_texture)
