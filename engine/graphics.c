@@ -149,6 +149,70 @@ int graphics_draw(graphics * g, game * gm)
 
 
 // #######################################################################################
+// Sprite Sheet
+// #######################################################################################
+
+
+//
+// Constructor
+//
+
+sprite_sheet * create_sprite_sheet()
+{
+    sprite_sheet * ss = (sprite_sheet *)malloc(sizeof(sprite_sheet));
+    
+    if (ss == NULL)
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to allocate sprite sheet\n");
+        return NULL;
+    }
+    
+    return ss;
+}
+
+
+//
+// Methods
+//
+
+int sprite_sheet_init(sprite_sheet * ss, graphics *g, int width, int height, char * path)
+{
+    ss->width = width;
+    ss->height = height;
+    
+    SDL_Surface * image;
+    image = SDL_LoadBMP(path);
+    
+    if (image == NULL)
+    {
+        ENGINE_DEBUG_LOG_ERROR("Couldn't load image [%s]\n", SDL_GetError());
+        return 1;
+    }
+    
+    ss->m_texture = SDL_CreateTextureFromSurface(g->m_renderer, image);
+    SDL_FreeSurface(image);
+    
+    if (ss->m_texture == NULL)
+    {
+        ENGINE_DEBUG_LOG_ERROR("Couldn't create texture [%s]\n", SDL_GetError());
+        return 1;
+    }
+    
+    return 0;
+}
+
+int sprite_sheet_cleanup(sprite_sheet * ss)
+{
+    if (ss->m_texture)
+    {
+        SDL_DestroyTexture(ss->m_texture);
+    }
+    
+    return 0;
+}
+
+
+// #######################################################################################
 // Sprite
 // #######################################################################################
 
@@ -170,10 +234,18 @@ sprite * create_sprite()
     return s;
 }
 
+
+//
+// Methods
+//
+
 int sprite_init(sprite * s, graphics *g, int width, int height, char * path)
 {
     s->width = width;
     s->height = height;
+    
+    s->m_offset_x = 0;
+    s->m_offset_y = 0;
     
     SDL_Surface * image;
     image = SDL_LoadBMP(path);
@@ -196,14 +268,22 @@ int sprite_init(sprite * s, graphics *g, int width, int height, char * path)
     return 0;
 }
 
-
-//
-// Methods
-//
+int sprite_init_from_sheet(sprite * s, sprite_sheet *ss, int x, int y, int width, int height)
+{
+    s->width = width;
+    s->height = height;
+    
+    s->m_offset_x = x;
+    s->m_offset_y = y;
+    
+    s->m_texture = ss->m_texture;
+    
+    return 0;
+}
 
 int sprite_draw(sprite * s, graphics *g, int x, int y)
 {
-    SDL_Rect source = { 0, 0, s->width, s->height };
+    SDL_Rect source = { s->m_offset_x, s->m_offset_y, s->width, s->height };
     SDL_Rect destination = { x, y, s->width, s->height };
     
     SDL_RenderCopy(g->m_renderer, s->m_texture, &source, &destination);

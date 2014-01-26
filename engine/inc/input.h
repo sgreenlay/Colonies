@@ -15,7 +15,7 @@ typedef enum {
 
 typedef struct _input {
 // private
-    int m_key_state[Key_Max];
+    int m_reserved;
 } input;
 
 
@@ -32,6 +32,7 @@ input * create_input();
 
 int input_init(input * i);
 int input_poll(input * i);
+int input_get_mouse_state(input * i, int * is_left_down, int * x, int * y);
 int input_is_key_down(input * i, Key k);
 int input_cleanup(input * i);
 
