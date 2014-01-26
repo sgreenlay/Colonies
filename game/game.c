@@ -28,7 +28,7 @@ int game_init(game * gm, engine * e)
 {
     graphics * g = engine_get_graphics(e);
     
-    if (sprite_sheet_init(&gm->m_sprites, g, 50, 50, "assets/sprites.bmp"))
+    if (sprite_sheet_init(&gm->m_sprites, g, 50, 50, "assets/sprites.png"))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize sprite sheet\n");
         return 1;

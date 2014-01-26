@@ -9,7 +9,7 @@ EXE=ggj14
 INCLUDEPATHS=-I/usr/local/include/SDL2/ -Iengine/inc -Igame/inc
 LIBPATHS=-L/usr/local/lib/
 
-LIBS=-lSDL2
+LIBS=-lSDL2 -lSDL2_image
 
 all: $(SOURCES) $(EXE)
 

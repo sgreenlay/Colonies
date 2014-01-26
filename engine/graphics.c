@@ -100,6 +100,11 @@ int graphics_init(graphics * g, int width, int height)
         return 1;
     }
     
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG) {
+        ENGINE_DEBUG_LOG_ERROR("Failed to intialize SDL_image PNG support [%s]\n", IMG_GetError());
+        return 1;
+    }
+    
     return 0;
 }
 
@@ -181,7 +186,7 @@ int sprite_sheet_init(sprite_sheet * ss, graphics *g, int width, int height, cha
     ss->height = height;
     
     SDL_Surface * image;
-    image = SDL_LoadBMP(path);
+    image = IMG_Load(path);
     
     if (image == NULL)
     {
@@ -248,7 +253,7 @@ int sprite_init(sprite * s, graphics *g, int width, int height, char * path)
     s->m_offset_y = 0;
     
     SDL_Surface * image;
-    image = SDL_LoadBMP(path);
+    image = IMG_Load(path);
     
     if (image == NULL)
     {
