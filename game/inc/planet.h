@@ -11,7 +11,7 @@ typedef enum {
 } planet_type;
 
 typedef struct _planet {
-    int x, y, w, h;
+    int x, y;
     planet_type type;
     
 // private

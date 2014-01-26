@@ -95,6 +95,7 @@ int sprite_init(sprite * s, graphics *g, int width, int height, char * path);
 int sprite_init_from_sheet(sprite * s, sprite_sheet *ss, int x, int y, int width, int height);
 int sprite_draw(sprite * s, graphics * g, int x, int y);
 int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, float scale);
+int sprite_draw_scaled_and_rotated(sprite * s, graphics *g, int x, int y, float scale, float rotation);
 int sprite_cleanup(sprite * s);
 
 #endif

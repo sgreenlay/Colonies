@@ -38,9 +38,50 @@ int game_init(game * gm, engine * e)
     
     for (idx = 0; idx < 2; idx++)
     {
-        if (planet_init(&gm->m_planets[idx], gm, 200 * idx, 200 * idx, (idx % 2 == 0) ? planet_type_human : planet_type_alien))
+        planet_type type;
+        int x;
+        int y = g->height / 2;
+        
+        switch (idx)
+        {
+            case 0:
+                type = planet_type_human;
+                x = g->width / 4;
+                break;
+            case 1:
+                type = planet_type_alien;
+                x = 3 * g->width / 4;
+                break;
+            default:
+                break;
+        }
+        
+        if (planet_init(&gm->m_planets[idx], gm, x, y, type))
         {
             ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize planet %d\n", idx);
+            return 1;
+        }
+    }
+    
+    for (idx = 0; idx < 1; idx++)
+    {
+        ship_type type;
+        int x;
+        int y = g->height / 2;
+        
+        switch (idx)
+        {
+            case 0:
+                type = ship_type_colony;
+                x = g->width / 4;
+                break;
+            default:
+                break;
+        }
+        
+        if (ship_init(&gm->m_ships[idx], gm, x, y, type))
+        {
+            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize ship %d\n", idx);
             return 1;
         }
     }
@@ -50,11 +91,20 @@ int game_init(game * gm, engine * e)
 
 int game_update(game * gm, engine * e, unsigned int dt)
 {
+    int idx = 0;
+    
     input * i = engine_get_input(e);
     
     float elapsed = (float)dt / 1000;
     
-    // TODO
+    for (idx = 0; idx < 1; idx++)
+    {
+        if (ship_update(&gm->m_ships[idx], gm, elapsed))
+        {
+            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to update ship %d\n", idx);
+            return 1;
+        }
+    }
     
     return 0;
 }
@@ -72,12 +122,30 @@ int game_render(game * gm, graphics * g)
         }
     }
     
+    for (idx = 0; idx < 1; idx++)
+    {
+        if (ship_draw(&gm->m_ships[idx], g))
+        {
+            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw ship %d\n", idx);
+            return 1;
+        }
+    }
+    
     return 0;
 }
 
 int game_cleanup(game * gm)
 {
     int idx = 0;
+    
+    for (idx = 0; idx < 1; idx++)
+    {
+        if (ship_cleanup(&gm->m_ships[idx]))
+        {
+            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to clean-up ship %d\n", idx);
+            return 1;
+        }
+    }
     
     for (idx = 0; idx < 2; idx++)
     {

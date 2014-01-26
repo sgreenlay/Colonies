@@ -7,11 +7,13 @@
 #include "input.h"
 
 #include "planet.h"
+#include "ship.h"
 
 typedef struct _game {
 // private
     sprite_sheet m_sprites;
     planet m_planets[2];
+    ship m_ships[1];
 } game;
 
 

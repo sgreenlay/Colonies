@@ -90,7 +90,7 @@ int graphics_init(graphics * g, int width, int height)
     
     SDL_Rect screen_bounds = { 0, 0, g->width, g->height };
     
-    SDL_FillRect(g->m_screen, &screen_bounds, SDL_MapRGBA(g->m_screen->format, 0x00, 0x00, 0xff, 0xFF));
+    SDL_FillRect(g->m_screen, &screen_bounds, SDL_MapRGBA(g->m_screen->format, 0x00, 0x00, 0x00, 0xFF));
     
     g->m_texture = SDL_CreateTextureFromSurface(g->m_renderer, g->m_screen);
     
@@ -288,6 +288,9 @@ int sprite_init_from_sheet(sprite * s, sprite_sheet *ss, int x, int y, int width
 
 int sprite_draw(sprite * s, graphics *g, int x, int y)
 {
+    x = x - s->width / 2;
+    y = y - s->height / 2;
+    
     SDL_Rect source = { s->m_offset_x, s->m_offset_y, s->width, s->height };
     SDL_Rect destination = { x, y, s->width, s->height };
     
@@ -298,10 +301,34 @@ int sprite_draw(sprite * s, graphics *g, int x, int y)
 
 int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, float scale)
 {
+    int w = s->width * scale;
+    int h = s->height * scale;
+    
+    x = x - w / 2;
+    y = y - h / 2;
+
     SDL_Rect source = { s->m_offset_x, s->m_offset_y, s->width, s->height };
-    SDL_Rect destination = { x, y, s->width * scale, s->height * scale };
+    SDL_Rect destination = { x, y, w, h };
     
     SDL_RenderCopy(g->m_renderer, s->m_texture, &source, &destination);
+    
+    return 0;
+}
+
+int sprite_draw_scaled_and_rotated(sprite * s, graphics *g, int x, int y, float scale, float rotation)
+{
+    int w = s->width * scale;
+    int h = s->height * scale;
+    
+    SDL_Point center = { w / 2, h / 2 };
+    
+    x = x - center.x;
+    y = y - center.y;
+
+    SDL_Rect source = { s->m_offset_x, s->m_offset_y, s->width, s->height };
+    SDL_Rect destination = { x, y, w, h };
+    
+    SDL_RenderCopyEx(g->m_renderer, s->m_texture, &source, &destination, rotation, &center, SDL_FLIP_NONE);
     
     return 0;
 }

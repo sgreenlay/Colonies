@@ -36,13 +36,6 @@ static const sprite_mapping map[] = {
     { 128, 128,  64,  64 }, /* frigate */
 };
 
-sprite_mapping get_sprite_mapping(sprite_map sm)
-{
-    if (sm < sprite_map_max)
-    {
-        return map[sm];
-    }
-    return map[sprite_map_error];
-}
+sprite_mapping get_sprite_mapping(sprite_map sm);
 
 #endif

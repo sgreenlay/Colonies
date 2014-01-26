@@ -48,9 +48,6 @@ int planet_init(planet * pl, game * gm, int x, int y, planet_type type)
             return 1;
     }
     
-    pl->w = spm.w;
-    pl->h = spm.h;
-    
     if (sprite_init_from_sheet(&pl->m_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize planet sprite\n");
@@ -64,7 +61,7 @@ int planet_draw(planet * pl, graphics * g)
 {
     if (sprite_draw(&pl->m_sprite, g, pl->x, pl->y))
     {
-        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw mouse sprite\n");
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw planet sprite\n");
         return 1;
     }
     
@@ -75,7 +72,7 @@ int planet_cleanup(planet * pl)
 {
     if (sprite_cleanup(&pl->m_sprite))
     {
-        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to clean-up character sprite\n");
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to clean-up planet sprite\n");
         return 1;
     }
     

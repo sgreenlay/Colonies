@@ -3,7 +3,7 @@ CFLAGS=-c -Wall -g
 LDFLAGS=
 
 GAME_INCLUDES=-Igame/inc -Iassets
-GAME_SOURCES= game/game.c game/planet.c
+GAME_SOURCES= game/game.c game/planet.c game/ship.c assets/sprite_mapping.c
 
 ENGINE_INCLUDES=-Iengine/inc
 ENGINE_SOURCES= main.c engine/engine.c engine/graphics.c engine/input.c engine/util.c engine/clock.c
