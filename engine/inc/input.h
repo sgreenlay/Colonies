@@ -15,7 +15,7 @@ typedef enum {
 
 typedef struct _input {
 // private
-    int m_key_state[Key_Max];
+    int m_reserved;
 } input;
 
 
