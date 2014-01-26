@@ -43,6 +43,12 @@ int game_init(game * gm, engine * e)
         return 1;
     }
     
+    if (sprite_init_from_sheet(&gm->m_object_sprite, &gm->m_sprites, 0, 51, 150, 150))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize object sprite\n");
+        return 1;
+    }
+    
     return 0;
 }
 
@@ -74,6 +80,12 @@ int game_update(game * gm, engine * e, unsigned int dt)
 
 int game_render(game * gm, graphics * g)
 {
+    if (sprite_draw(&gm->m_object_sprite, g, 20, 20))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw object sprite\n");
+        return 1;
+    }
+    
     int x = (int)gm->m_character_x;
     int y = (int)gm->m_character_y;
     

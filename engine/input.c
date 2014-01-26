@@ -48,6 +48,16 @@ int input_poll(input * i)
         {
             return 1;
         }
+        else if (event.type == SDL_KEYDOWN)
+        {
+            switch (event.key.keysym.sym)
+            {
+                case SDLK_ESCAPE:
+                    return 1;
+                default:
+                    break;
+            }
+        }
     }
     
     return 0;

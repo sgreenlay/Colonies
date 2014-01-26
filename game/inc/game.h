@@ -9,8 +9,11 @@
 typedef struct _game {
 // private
     sprite_sheet m_sprites;
+    
     float m_character_x, m_character_y;
     sprite m_character_sprite;
+    
+    sprite m_object_sprite;
 } game;
 
 
