@@ -229,7 +229,7 @@ int game_update(game * gm, engine * e, unsigned int dt)
     {
         int evt = ship_update(&gm->m_ships[idx], gm, elapsed);
         
-        if (evt != 0)
+        if (evt > 0)
         {
             planet * planet = &gm->m_planets[evt - 1];
             
