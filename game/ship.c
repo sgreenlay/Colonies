@@ -25,42 +25,85 @@ ship * create_ship()
 
 
 //
+// Setters
+//
+
+int ship_set_type(ship * sh, game * gm, ship_type type)
+{
+    if (type != sh->ty)
+    {
+        if (sprite_cleanup(&sh->m_sprite))
+        {
+            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to clean-up ship sprite\n");
+            return 1;
+        }
+        
+        sh->ty = type;
+        
+        sprite_mapping spm;
+    
+        switch (type)
+        {
+            case ship_type_human:
+                switch (sh->cl)
+                {
+                    case ship_class_colony:
+                        spm = get_sprite_mapping(sprite_map_small_fighter3);
+                        break;
+                    case ship_class_frigate:
+                        spm = get_sprite_mapping(sprite_map_small_fighter1);
+                        break;
+                    default:
+                        ENGINE_DEBUG_LOG_ERROR("ERROR: Unknown human ship class [%d]\n", sh->cl);
+                        return 1;
+                }
+                break;
+            case ship_type_alien:
+                switch (sh->cl)
+                {
+                    case ship_class_colony:
+                        spm = get_sprite_mapping(sprite_map_small_fighter4);
+                        break;
+                    case ship_class_frigate:
+                        spm = get_sprite_mapping(sprite_map_small_fighter1);
+                        break;
+                    default:
+                        ENGINE_DEBUG_LOG_ERROR("ERROR: Unknown human alien class [%d]\n", sh->cl);
+                        return 1;
+                }
+                break;
+            default:
+                ENGINE_DEBUG_LOG_ERROR("ERROR: Unknown ship type [%d]\n", type);
+                return 1;
+        }
+        
+        if (sprite_init_from_sheet(&sh->m_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
+        {
+            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize ship sprite\n");
+            return 1;
+        }
+        
+        sh->w = spm.w;
+        sh->h = spm.h;
+    }
+    
+    return 0;
+}
+
+
+//
 // Methods
 //
 
-int ship_init(ship * sh, game * gm, int x, int y,int w,int h, ship_type type)
+int ship_init(ship * sh, game * gm, int x, int y,int w,int h, ship_class cl, ship_type ty)
 {
-    sh->type = type;
+    sh->cl = cl;
+    sh->ty = ship_type_none;
     sh->dest_x = sh->x = x;
     sh->dest_y = sh->y = y;
     sh->dest_r = sh->r = 0;
     
-    sprite_mapping spm;
-    
-    switch (type)
-    {
-        case ship_type_colony:
-            spm = get_sprite_mapping(sprite_map_colony_ship);
-            break;
-        case ship_type_carrier:
-            spm = get_sprite_mapping(sprite_map_carrier);
-            break;
-        case ship_type_frigate:
-            spm = get_sprite_mapping(sprite_map_frigate);
-            break;
-        default:
-            ENGINE_DEBUG_LOG_ERROR("ERROR: Unknown ship type [%d]\n", type);
-            return 1;
-    }
-    
-    sh->w = spm.w;
-    sh->h = spm.h;
-    
-    if (sprite_init_from_sheet(&sh->m_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
-    {
-        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize ship sprite\n");
-        return 1;
-    }
+    ship_set_type(sh, gm, ty);
     
     return 0;
 }

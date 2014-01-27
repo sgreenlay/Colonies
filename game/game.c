@@ -99,16 +99,29 @@ int game_init(game * gm, engine * e)
         }
     }
     
-    gm->m_ship_count = 1;
+    gm->m_ship_count = 2;
     for (idx = 0; idx < gm->m_ship_count; idx++)
     {
-        ship_type type;
+        ship_type ty;
+        ship_class cl;
         int x, y, w, h;
         
         switch (idx)
         {
             case 0:
-                type = ship_type_colony;
+                ty = ship_type_human;
+                cl = ship_class_colony;
+                
+                x = gm->m_planets[idx].x;
+                y = gm->m_planets[idx].y;
+                
+                w = 64;
+                h = 64;
+                
+                break;
+            case 1:
+                ty = ship_type_human;
+                cl = ship_class_frigate;
                 
                 x = gm->m_planets[idx].x;
                 y = gm->m_planets[idx].y;
@@ -121,7 +134,7 @@ int game_init(game * gm, engine * e)
                 break;
         }
         
-        if (ship_init(&gm->m_ships[idx], gm, x, y, w, h, type))
+        if (ship_init(&gm->m_ships[idx], gm, x, y, w, h, cl, ty))
         {
             ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize ship %d\n", idx);
             return 1;
@@ -160,6 +173,19 @@ hit_test_target game_hit_test(game * gm, int x, int y)
             target.type = hit_test_target_ship;
             target.index = idx;
             
+            switch (gm->m_ships[idx].ty)
+            {
+                case ship_type_human:
+                    target.controller = hit_test_control_human;
+                    break;
+                case ship_type_alien:
+                    target.controller = hit_test_control_alien;
+                    break;
+                default:
+                    target.controller = hit_test_control_none;
+                    break;
+            }
+            
             return target;
         }
     }
@@ -170,6 +196,19 @@ hit_test_target game_hit_test(game * gm, int x, int y)
         {
             target.type = hit_test_target_planet;
             target.index = idx;
+            
+            switch (gm->m_planets[idx].type)
+            {
+                case planet_type_human:
+                    target.controller = hit_test_control_human;
+                    break;
+                case planet_type_alien:
+                    target.controller = hit_test_control_alien;
+                    break;
+                default:
+                    target.controller = hit_test_control_none;
+                    break;
+            }
             
             return target;
         }
@@ -197,8 +236,13 @@ int game_update(game * gm, engine * e, unsigned int dt)
     {
         hit_test_target target = game_hit_test(gm, gm->m_cursor_x, gm->m_cursor_y);
         
-        if ((target.type != gm->m_current_target.type) || 
-            (target.index != gm->m_current_target.index))
+        if ((target.controller == hit_test_control_human) &&
+            ((target.type != gm->m_current_target.type) || 
+             (target.index != gm->m_current_target.index)))
+        {
+            gm->m_current_target = target;
+        }
+        else if (target.controller == hit_test_control_none)
         {
             gm->m_current_target = target;
         }
@@ -225,7 +269,7 @@ int game_update(game * gm, engine * e, unsigned int dt)
     
     float elapsed = (float)dt / 1000;
     
-    for (idx = 0; idx < 1; idx++)
+    for (idx = 0; idx < gm->m_ship_count; idx++)
     {
         int evt = ship_update(&gm->m_ships[idx], gm, elapsed);
         
@@ -248,7 +292,6 @@ int game_update(game * gm, engine * e, unsigned int dt)
 int game_render(game * gm, graphics * g)
 {
     int idx = 0;
-
 
     for (idx = 0; idx < gm->m_planet_count; idx++)
     {
