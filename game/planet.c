@@ -23,21 +23,8 @@ planet * create_planet()
 
 
 //
-// Methods
+// Setters
 //
-
-int planet_init(planet * pl, game * gm, int x, int y,int w, int h, planet_type type)
-{
-    pl->type = planet_type_none;
-    pl->x = x;
-    pl->y = y;
-    pl->w = w;
-    pl->h = h;
-    
-    planet_set_type(pl, gm, type);
-    
-    return 0;
-}
 
 int planet_set_type(planet * pl, game * gm, planet_type type)
 {
@@ -72,6 +59,24 @@ int planet_set_type(planet * pl, game * gm, planet_type type)
             return 1;
         }
     }
+    
+    return 0;
+}
+
+
+//
+// Methods
+//
+
+int planet_init(planet * pl, game * gm, int x, int y,int w, int h, planet_type type)
+{
+    pl->type = planet_type_none;
+    pl->x = x;
+    pl->y = y;
+    pl->w = w;
+    pl->h = h;
+    
+    planet_set_type(pl, gm, type);
     
     return 0;
 }
