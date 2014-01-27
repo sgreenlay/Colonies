@@ -373,22 +373,25 @@ const int expected_height = 16;
 const int height_fix = 1;
 const int tiles_per_row = 16;
 
-int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size, SDL_Color color)
+int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size, SDL_Color* color)
 {
-	SDL_Rect dstRect = { x, y , expected_width, expected_height };
+	float scale = (float)size / expected_width;
+	SDL_Rect dstRect = { x, y, expected_width*scale, expected_height*scale };
 	int x_cord = (DrawChar% tiles_per_row) * expected_width;
 	int y_cord = (DrawChar / tiles_per_row) * (expected_height+height_fix);
 	SDL_Rect srcRect = { x_cord, y_cord, expected_width, expected_height + height_fix };
+	SDL_SetTextureColorMod(font_sheet->m_texture, color->r, color->g, color->b);
 	SDL_RenderCopy(g->m_renderer, font_sheet->m_texture, &srcRect, &dstRect);
 
 	return 0;
 }
 
-int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color color)
+int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color* color)
 {
 	int idx;
 	int len_s = strlen(DrawStr);
+	float scale = (float)size / expected_width;
 	for (idx = 0; idx < len_s;idx++)
-		drawChar(font_sheet, g, DrawStr[idx], x += expected_width, y, size, color);
+		drawChar(font_sheet, g, DrawStr[idx], x += expected_width*scale, y, size, color);
 	return 0;
 }

@@ -105,8 +105,8 @@ int sprite_cleanup(sprite * s);
 // #######################################################################################
 
 int font_sheet_init(sprite_sheet * fs, graphics *g, char * path);
-int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size, SDL_Color color);
-int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color color);
+int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size, SDL_Color* color);
+int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color* color);
 
 
 #endif

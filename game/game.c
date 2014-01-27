@@ -246,7 +246,7 @@ int game_update(game * gm, engine * e, unsigned int dt)
 int game_render(game * gm, graphics * g)
 {
     int idx = 0;
-	SDL_Color BLACK_COLOR = { 0, 0, 0, 0 };
+	SDL_Color BLACK_COLOR = { 255, 0, 0, 0 };
 
     for (idx = 0; idx < 2; idx++)
     {
@@ -290,7 +290,7 @@ int game_render(game * gm, graphics * g)
         }
     }
 
-	drawString(&gm->m_font, g, "hello meow", 5, 5, 10, BLACK_COLOR);
+	drawString(&gm->m_font, g, "Human Power", 300, 400, 30, &BLACK_COLOR);
 
     if (sprite_draw(&gm->m_cursor_sprite, g, gm->m_cursor_x, gm->m_cursor_y))
     {
