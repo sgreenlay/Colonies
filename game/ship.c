@@ -31,8 +31,6 @@ int ship_init(ship * sh, game * gm, int x, int y,int w,int h, ship_type type)
     sh->type = type;
     sh->dest_x = sh->x = x;
     sh->dest_y = sh->y = y;
-	sh->w = w;
-	sh->h = h;
     
     sprite_mapping spm;
     
@@ -51,6 +49,9 @@ int ship_init(ship * sh, game * gm, int x, int y,int w,int h, ship_type type)
             ENGINE_DEBUG_LOG_ERROR("ERROR: Unknown ship type [%d]\n", type);
             return 1;
     }
+    
+    sh->w = spm.w;
+    sh->h = spm.h;
     
     if (sprite_init_from_sheet(&sh->m_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
     {
@@ -126,6 +127,17 @@ int ship_update(ship * sh, game * gm, float elapsed)
         int event = sh->m_event;
         sh->m_event = 0;
         return event;
+    }
+    
+    return 0;
+}
+
+int ship_hit_test(ship * sh, int x, int y)
+{
+    if ((x >= sh->x - sh->w / 2) && (x <= sh->x + sh->w / 2) &&
+        (y >= sh->y - sh->h / 2) && (y <= sh->y + sh->h / 2))
+    {
+        return 1;
     }
     
     return 0;

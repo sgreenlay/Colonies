@@ -9,12 +9,16 @@
 #include "planet.h"
 #include "ship.h"
 
-typedef enum _SelectedObject{
-	SONothing =0,
-	SOPlanet = 1,
-	SOShip = 2
-} SelectedObject;
+typedef enum _hit_test_target_type {
+    hit_test_target_none,
+    hit_test_target_ship,
+    hit_test_target_planet
+} hit_test_target_type;
 
+typedef struct _hit_test_target {
+    hit_test_target_type type;
+    int index;
+} hit_test_target;
 
 typedef struct _game {
 // private
@@ -27,10 +31,7 @@ typedef struct _game {
     planet m_planets[2];
     ship m_ships[1];
 
-	int selected_active; //if something is selected or not
-	SelectedObject selected_type;   //nothing, planet or ship
-	int selection_id;    //id into the array of the object
-
+    hit_test_target m_current_target;
 } game;
 
 
@@ -48,6 +49,7 @@ game * create_game();
 int game_init(game * gm, engine * e);
 int game_update(game * gm, engine * e, unsigned int dt);
 int game_render(game * gm, graphics * g);
+hit_test_target game_hit_test(game * gm, int x, int y);
 int game_cleanup(game * gm);
 
 #endif

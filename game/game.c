@@ -115,6 +115,36 @@ int game_init(game * gm, engine * e)
     return 0;
 }
 
+hit_test_target game_hit_test(game * gm, int x, int y)
+{
+    int idx = 0;
+    
+    hit_test_target target = { hit_test_target_none, 0 };
+    
+    for (idx = 0; idx < 1; idx++)
+    {
+        if (ship_hit_test(&gm->m_ships[idx], x, y))
+        {
+            target.type = hit_test_target_ship;
+            target.index = idx;
+            
+            return target;
+        }
+    }
+    
+    for (idx = 0; idx < 2; idx++)
+    {
+        if (planet_hit_test(&gm->m_planets[idx], x, y))
+        {
+            target.type = hit_test_target_planet;
+            target.index = idx;
+            
+            return target;
+        }
+    }
+    
+    return target;
+}
 
 int game_update(game * gm, engine * e, unsigned int dt)
 {
@@ -124,58 +154,42 @@ int game_update(game * gm, engine * e, unsigned int dt)
     
 	int is_mouse_left_down = 0;
 	int is_mouse_right_down = 0;
+    
 	if (input_get_mouse_state(i, &is_mouse_left_down, &is_mouse_right_down, &gm->m_cursor_x, &gm->m_cursor_y))
 	{
 		ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to get mouse state\n");
 		return 1;
 	}
-	if (is_mouse_left_down == 1)
-	{
-		//TEMP: TODO: REMOVE
-		int selected_active = gm->selected_active;
-		SelectedObject selected_type = gm->selected_type;
-		int selection_id = gm->selection_id;
-		//
-		int hit_something = 0;
-		//first check hit box on planets
-		for (idx = 0; idx < 2; idx++)
-		{
-			if (point_intersect_box(gm->m_cursor_x, gm->m_cursor_y, gm->m_planets[idx].x, gm->m_planets[idx].y, gm->m_planets[idx].w,
-				gm->m_planets[idx].h))
-			{
-				hit_something = 1;
-				gm->selected_active = 1;
-				gm->selected_type = SOPlanet;
-				gm->selection_id = idx;
-				break;
-			}
-		}
-		if (hit_something==0) //check for  ships if no planets hit
-		for (idx = 0; idx < 1; idx++)
-		{
-			if (point_intersect_box(gm->m_cursor_x, gm->m_cursor_y, gm->m_ships[idx].x, gm->m_ships[idx].y, gm->m_ships[idx].w,
-				gm->m_ships[idx].h))
-			{
-				hit_something = 1;
-				gm->selected_active = 1;
-				gm->selected_type = SOShip;
-				gm->selection_id = idx;
-				break;
-			}
-		}
-		if (hit_something == 0) //did not hit anything
-		{
-			if (selected_active == 1)
-				printf("Unselecting\n");
-			gm->selected_active = 0; gm->selected_type = SONothing;
-		}
-		else //TODO:REMOVE
-		{
-			if (0 == ((selected_active == gm->selected_active) && (gm->selected_type == selected_type) && (selection_id == gm->selection_id)))
-			{
-				printf("Hit a new target %i, %i, %i\n", (int)gm->selected_active, (int)gm->selected_type, (int)gm->selection_id);
-			}
-		}
+    
+    if (is_mouse_left_down)
+    {
+        hit_test_target target = game_hit_test(gm, gm->m_cursor_x, gm->m_cursor_y);
+        
+        if ((target.type != gm->m_current_target.type) || 
+            (target.index != gm->m_current_target.index))
+        {
+            gm->m_current_target = target;
+            ENGINE_DEBUG_LOG("Current target %d %d\n", target.type, target.index);
+        }
+    }
+    else if (is_mouse_right_down)
+    {
+        if (gm->m_current_target.type == hit_test_target_ship)
+        {
+            hit_test_target target = game_hit_test(gm, gm->m_cursor_x, gm->m_cursor_y);
+            
+            if (target.type == hit_test_target_planet)
+            {
+                ship * ship = &gm->m_ships[gm->m_current_target.index];
+                planet * planet = &gm->m_planets[target.index];
+                
+                if (ship_fly_to(ship, planet->x, planet->y, target.index) != 0)
+                {
+                    ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to set ship destination %d\n", gm->m_current_target.index);
+                    return 1;
+                }
+            }
+        }
     }
     
     float elapsed = (float)dt / 1000;
@@ -238,28 +252,6 @@ int game_render(game * gm, graphics * g)
             return 1;
         }
     }
-	if (gm->selected_active == 1)
-	{
-		int x = 0;
-		int y = 0;
-		if (gm->selected_type == SOPlanet)
-		{
-			x = gm->m_planets[gm->selection_id].x;
-			y = gm->m_planets[gm->selection_id].y;
-		}
-		else if (gm->selected_type == SOShip)
-		{
-			x = gm->m_ships[gm->selection_id].x;
-			y = gm->m_ships[gm->selection_id].y;
-		}
-		else
-		{
-			ENGINE_DEBUG_LOG_ERROR("ERROR: object selected is of type %d\n", (int) gm->selected_type);
-		}
-
-		(void)x; (void)y;
-		//SDL_FillRect(g,x....y....);
-	}
 
     if (sprite_draw(&gm->m_cursor_sprite, g, gm->m_cursor_x, gm->m_cursor_y))
     {

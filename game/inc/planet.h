@@ -33,6 +33,7 @@ planet * create_planet();
 
 int planet_init(planet * pl, game * gm, int x, int y, int w, int h, planet_type type);
 int planet_draw(planet * pl, graphics * g);
+int planet_hit_test(planet * pl, int x, int y);
 int planet_cleanup(planet * pl);
 
 #endif
