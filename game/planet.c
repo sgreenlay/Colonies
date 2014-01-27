@@ -31,6 +31,8 @@ int planet_init(planet * pl, game * gm, int x, int y,int w, int h, planet_type t
     pl->type = type;
     pl->x = x;
     pl->y = y;
+    pl->w = w;
+    pl->h = h;
     
     sprite_mapping spm;
     
@@ -46,9 +48,6 @@ int planet_init(planet * pl, game * gm, int x, int y,int w, int h, planet_type t
             ENGINE_DEBUG_LOG_ERROR("ERROR: Unknown planet type [%d]\n", type);
             return 1;
     }
-    
-    pl->w = spm.w;
-    pl->h = spm.h;
     
     if (sprite_init_from_sheet(&pl->m_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
     {
@@ -72,7 +71,7 @@ int planet_hit_test(planet * pl, int x, int y)
 
 int planet_draw(planet * pl, graphics * g)
 {
-    if (sprite_draw(&pl->m_sprite, g, pl->x, pl->y))
+    if (sprite_draw_scaled(&pl->m_sprite, g, pl->x, pl->y, pl->w, pl->h))
     {
 		//TODO: shrink sprite
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw planet sprite\n");

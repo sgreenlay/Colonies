@@ -36,47 +36,78 @@ int game_init(game * gm, engine * e)
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize sprite sheet\n");
         return 1;
     }
-	if (font_sheet_init(&gm->m_font, g, "assets/font_tilemap.png"))
-	{
-		ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize font sheet\n");
-		return 1;
-	}
+    
+    if (font_sheet_init(&gm->m_font, g, "assets/font_tilemap.png"))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize font sheet\n");
+        return 1;
+    }
 
-    for (idx = 0; idx < 2; idx++)
+    gm->m_planet_count = 4;
+    for (idx = 0; idx < gm->m_planet_count; idx++)
     {
         planet_type type;
-        int x;
-        int y = g->height / 2;
+        int x, y;
+        int w, h;
         
         switch (idx)
         {
             case 0:
                 type = planet_type_human;
+                
                 x = g->width / 4;
+                y = g->height / 2;
+                w = 128;
+                h = 128;
+                
                 break;
             case 1:
                 type = planet_type_alien;
+                
                 x = 3 * g->width / 4;
+                y = g->height / 2;
+                w = 128;
+                h = 128;
+                
+                break;
+            case 2:
+                type = planet_type_human;
+                
+                x = 2 * g->width / 6;
+                y = g->height / 4;
+                w = 64;
+                h = 64;
+                
+                break;
+            case 3:
+                type = planet_type_alien;
+                
+                x = 4 * g->width / 6;
+                y = 3 * g->height / 4;
+                w = 64;
+                h = 64;
+                
                 break;
             default:
                 break;
         }
         
-		//TODO: replace 128. 
-        if (planet_init(&gm->m_planets[idx], gm, x, y,128,128, type))
+        if (planet_init(&gm->m_planets[idx], gm, x, y, w, h, type))
         {
             ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize planet %d\n", idx);
             return 1;
         }
     }
     
-    for (idx = 0; idx < 1; idx++)
+    gm->m_ship_count = 1;
+    for (idx = 0; idx < gm->m_ship_count; idx++)
     {
         ship_type type;
         
         int x, y;
         int dest_x, dest_y;
         int event;
+        int w, h;
         
         switch (idx)
         {
@@ -91,20 +122,17 @@ int game_init(game * gm, engine * e)
                 
                 event = idx + 2;
                 
+                w = 64;
+                h = 64;
+                
                 break;
             default:
                 break;
         }
-        //TODO: replace 64,64
-        if (ship_init(&gm->m_ships[idx], gm, x, y,64,64, type))
+        
+        if (ship_init(&gm->m_ships[idx], gm, x, y, w, h, type))
         {
             ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize ship %d\n", idx);
-            return 1;
-        }
-        
-        if (ship_fly_to(&gm->m_ships[idx], dest_x, dest_y, event) != 0)
-        {
-            ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to set ship destination %d\n", idx);
             return 1;
         }
     }
@@ -134,7 +162,7 @@ hit_test_target game_hit_test(game * gm, int x, int y)
     
     hit_test_target target = { hit_test_target_none, 0 };
     
-    for (idx = 0; idx < 1; idx++)
+    for (idx = 0; idx < gm->m_ship_count; idx++)
     {
         if (ship_hit_test(&gm->m_ships[idx], x, y))
         {
@@ -145,7 +173,7 @@ hit_test_target game_hit_test(game * gm, int x, int y)
         }
     }
     
-    for (idx = 0; idx < 2; idx++)
+    for (idx = 0; idx < gm->m_planet_count; idx++)
     {
         if (planet_hit_test(&gm->m_planets[idx], x, y))
         {
@@ -212,31 +240,7 @@ int game_update(game * gm, engine * e, unsigned int dt)
         
         if (evt != 0)
         {
-            int dest_x, dest_y;
-            
-            switch (evt)
-            {
-                case 1:
-                    dest_x = gm->m_planets[1].x;
-                    dest_y = gm->m_planets[1].y;    
-                    evt = 2;
-                    
-                    break;
-                case 2:
-                    dest_x = gm->m_planets[0].x;
-                    dest_y = gm->m_planets[0].y; 
-                    evt = 1;
-                    
-                    break;
-                default:
-                    break;
-            }
-            
-            if (ship_fly_to(&gm->m_ships[idx], dest_x, dest_y, evt) != 0)
-            {
-                ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to set ship destination %d\n", idx);
-                return 1;
-            }
+            ENGINE_DEBUG_LOG_ERROR("Ship %d arrived at planet %d\n", idx, evt - 1);
         }
     }
     
@@ -246,8 +250,9 @@ int game_update(game * gm, engine * e, unsigned int dt)
 int game_render(game * gm, graphics * g)
 {
     int idx = 0;
-	
-    for (idx = 0; idx < 2; idx++)
+
+
+    for (idx = 0; idx < gm->m_planet_count; idx++)
     {
         if (planet_draw(&gm->m_planets[idx], g))
         {
@@ -268,7 +273,7 @@ int game_render(game * gm, graphics * g)
         }
     }
     
-    for (idx = 0; idx < 1; idx++)
+    for (idx = 0; idx < gm->m_ship_count; idx++)
     {
         if (ship_draw(&gm->m_ships[idx], g))
         {
@@ -317,7 +322,7 @@ int game_cleanup(game * gm)
         return 1;
     }
     
-    for (idx = 0; idx < 1; idx++)
+    for (idx = 0; idx < gm->m_ship_count; idx++)
     {
         if (ship_cleanup(&gm->m_ships[idx]))
         {
@@ -326,7 +331,7 @@ int game_cleanup(game * gm)
         }
     }
     
-    for (idx = 0; idx < 2; idx++)
+    for (idx = 0; idx < gm->m_planet_count; idx++)
     {
         if (planet_cleanup(&gm->m_planets[idx]))
         {

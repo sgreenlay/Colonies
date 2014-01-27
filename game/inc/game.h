@@ -28,8 +28,11 @@ typedef struct _game {
     int m_cursor_x, m_cursor_y;
     sprite m_cursor_sprite;
     
-    planet m_planets[2];
+    planet m_planets[4];
+    int m_planet_count;
+    
     ship m_ships[1];
+    int m_ship_count;
 
     sprite m_selection_sprite;
     hit_test_target m_current_target;
