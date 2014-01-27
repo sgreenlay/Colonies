@@ -26,11 +26,13 @@ ship * create_ship()
 // Methods
 //
 
-int ship_init(ship * sh, game * gm, int x, int y, ship_type type)
+int ship_init(ship * sh, game * gm, int x, int y,int w,int h, ship_type type)
 {
     sh->type = type;
     sh->dest_x = sh->x = x;
     sh->dest_y = sh->y = y;
+	sh->w = w;
+	sh->h = h;
     
     sprite_mapping spm;
     

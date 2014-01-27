@@ -63,19 +63,22 @@ int input_poll(input * i)
     return 0;
 }
 
-int input_get_mouse_state(input * i, int * is_left_down, int * x, int * y)
+int input_get_mouse_state(input * i, int * is_left_down, int * is_right_down, int * x, int * y)
 {
-    const Uint8 * keystate = SDL_GetKeyboardState(NULL);
+    //const Uint8 * keystate = SDL_GetKeyboardState(NULL);
     
-    *is_left_down = (keystate[SDL_GetScancodeFromKey(SDL_BUTTON_LEFT)] != 0);
+    //*is_left_down = (keystate[SDL_GetScancodeFromKey(SDL_BUTTON_LEFT)] != 0);
     
-    SDL_GetMouseState(x, y);
-    
+    Uint32 buttons_state = SDL_GetMouseState(x, y);
+	*is_left_down = (0!=(buttons_state & SDL_BUTTON(1))) ;
+	*is_right_down = (0 != (buttons_state & SDL_BUTTON(3)));
+	    
     return 0;
 }
 
 int input_is_key_down(input * i, Key k)
 {
+	//TODO: call this once, save the keystate.
     const Uint8 * keystate = SDL_GetKeyboardState(NULL);
     
     switch (k)

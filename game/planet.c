@@ -26,11 +26,13 @@ planet * create_planet()
 // Methods
 //
 
-int planet_init(planet * pl, game * gm, int x, int y, planet_type type)
+int planet_init(planet * pl, game * gm, int x, int y,int w, int h, planet_type type)
 {
     pl->type = type;
     pl->x = x;
     pl->y = y;
+	pl->w = w;
+	pl->h = h;
     
     sprite_mapping spm;
     
@@ -60,6 +62,7 @@ int planet_draw(planet * pl, graphics * g)
 {
     if (sprite_draw(&pl->m_sprite, g, pl->x, pl->y))
     {
+		//TODO: shrink sprite
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw planet sprite\n");
         return 1;
     }

@@ -12,6 +12,7 @@ typedef enum {
 
 typedef struct _planet {
     int x, y;
+	int w, h;
     planet_type type;
     
 // private
@@ -30,7 +31,7 @@ planet * create_planet();
 // Methods
 //
 
-int planet_init(planet * pl, game * gm, int x, int y, planet_type type);
+int planet_init(planet * pl, game * gm, int x, int y, int w, int h, planet_type type);
 int planet_draw(planet * pl, graphics * g);
 int planet_cleanup(planet * pl);
 

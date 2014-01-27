@@ -32,7 +32,7 @@ input * create_input();
 
 int input_init(input * i);
 int input_poll(input * i);
-int input_get_mouse_state(input * i, int * is_left_down, int * x, int * y);
+int input_get_mouse_state(input * i, int * is_left_down, int * is_right_down, int * x, int * y);
 int input_is_key_down(input * i, Key k);
 int input_cleanup(input * i);
 

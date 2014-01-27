@@ -40,6 +40,7 @@ int graphics_draw(graphics * g, game * gm);
 int graphics_cleanup(graphics * g);
 
 
+
 // #######################################################################################
 // Sprite Sheet
 // #######################################################################################
@@ -98,5 +99,13 @@ int sprite_draw(sprite * s, graphics * g, int x, int y);
 int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, float scale);
 int sprite_draw_scaled_and_rotated(sprite * s, graphics *g, int x, int y, float scale, float rotation);
 int sprite_cleanup(sprite * s);
+
+// #######################################################################################
+// Font Drawing
+// #######################################################################################
+
+int drawChar(sprite_sheet* s, graphics * g, char DrawChar, int x, int y, int size, SDL_Color color);
+int drawString(sprite_sheet* s, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color color);
+
 
 #endif
