@@ -84,6 +84,15 @@ int ship_fly_to(ship * sh, int x, int y, int event)
             
             sh->dest_r = atan2(sh->dy, sh->dx) * 180.0f / M_PI;
             
+            if (sh->dest_r > 360.0f)
+            {
+                sh->dest_r -= 360.0f;
+            }
+            else if (sh->dest_r < 0.0f)
+            {
+                sh->dest_r += 360.0f;
+            }
+            
             sh->m_event = event;
         }
         else
@@ -111,7 +120,7 @@ int ship_fly_to(ship * sh, int x, int y, int event)
         else
         {
             cw = sh->r - sh->dest_r;
-            ccw = 360 - ccw;
+            ccw = 360 - cw;
         }
         
         if (ccw > cw)
@@ -131,18 +140,26 @@ int ship_update(ship * sh, game * gm, float elapsed)
 {
     if (sh->dr != 0)
     {
-        sh->r += 90.0f * sh->dr * elapsed;
+        float dr = 90.0f * sh->dr * elapsed;
         
-        if (sh->r >= 360.0f)
-        {
-            sh->r -= 360.0f;
-        }
-        
-        if (((sh->dr > 0) && (sh->r > sh->dest_r)) ||
-            ((sh->dr < 0) && (sh->r < sh->dest_r)))
+        if (((sh->r < sh->dest_r) && (sh->r + dr > sh->dest_r)) ||
+            ((sh->r > sh->dest_r) && (sh->r + dr < sh->dest_r)))
         {
             sh->r = sh->dest_r;
             sh->dr = 0;
+        }
+        else
+        {
+            sh->r += dr;
+        }
+        
+        if (sh->r > 360.0f)
+        {
+            sh->r -= 360.0f;
+        }
+        else if (sh->r < 0.0f)
+        {
+            sh->r += 360.0f;
         }
     }
     else if ((sh->dx != 0) || (sh->dy != 0))
