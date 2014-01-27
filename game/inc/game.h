@@ -16,8 +16,16 @@ typedef enum _hit_test_target_type {
     hit_test_target_planet
 } hit_test_target_type;
 
+// TODO: make this shared by planet + ship
+typedef enum _hit_test_control_type {
+    hit_test_control_none,
+    hit_test_control_human,
+    hit_test_control_alien
+} hit_test_control_type;
+
 typedef struct _hit_test_target {
     hit_test_target_type type;
+    hit_test_control_type controller;
     int index;
 } hit_test_target;
 
@@ -42,7 +50,7 @@ typedef struct _game {
     planet m_planets[4];
     int m_planet_count;
     
-    ship m_ships[1];
+    ship m_ships[2];
     int m_ship_count;
 
     sprite m_selection_sprite;
