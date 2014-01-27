@@ -31,6 +31,7 @@ typedef struct _game {
     planet m_planets[2];
     ship m_ships[1];
 
+    sprite m_selection_sprite;
     hit_test_target m_current_target;
 } game;
 

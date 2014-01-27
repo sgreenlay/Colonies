@@ -104,7 +104,15 @@ int game_init(game * gm, engine * e)
         }
     }
     
-    sprite_mapping spm = get_sprite_mapping(sprite_map_cursor);
+    sprite_mapping spm = get_sprite_mapping(sprite_map_selection);
+    
+    if (sprite_init_from_sheet(&gm->m_selection_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize cursor sprite\n");
+        return 1;
+    }
+    
+    spm = get_sprite_mapping(sprite_map_cursor);
     
     if (sprite_init_from_sheet(&gm->m_cursor_sprite, &gm->m_sprites, spm.x, spm.y, spm.w, spm.h))
     {
@@ -152,14 +160,14 @@ int game_update(game * gm, engine * e, unsigned int dt)
     
     input * i = engine_get_input(e);
     
-	int is_mouse_left_down = 0;
-	int is_mouse_right_down = 0;
+    int is_mouse_left_down = 0;
+    int is_mouse_right_down = 0;
     
-	if (input_get_mouse_state(i, &is_mouse_left_down, &is_mouse_right_down, &gm->m_cursor_x, &gm->m_cursor_y))
-	{
-		ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to get mouse state\n");
-		return 1;
-	}
+    if (input_get_mouse_state(i, &is_mouse_left_down, &is_mouse_right_down, &gm->m_cursor_x, &gm->m_cursor_y))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to get mouse state\n");
+        return 1;
+    }
     
     if (is_mouse_left_down)
     {
@@ -169,7 +177,6 @@ int game_update(game * gm, engine * e, unsigned int dt)
             (target.index != gm->m_current_target.index))
         {
             gm->m_current_target = target;
-            ENGINE_DEBUG_LOG("Current target %d %d\n", target.type, target.index);
         }
     }
     else if (is_mouse_right_down)
@@ -183,7 +190,7 @@ int game_update(game * gm, engine * e, unsigned int dt)
                 ship * ship = &gm->m_ships[gm->m_current_target.index];
                 planet * planet = &gm->m_planets[target.index];
                 
-                if (ship_fly_to(ship, planet->x, planet->y, target.index) != 0)
+                if (ship_fly_to(ship, planet->x, planet->y, target.index + 1) != 0)
                 {
                     ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to set ship destination %d\n", gm->m_current_target.index);
                     return 1;
@@ -242,6 +249,18 @@ int game_render(game * gm, graphics * g)
             ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw planet %d\n", idx);
             return 1;
         }
+        
+        if ((gm->m_current_target.type == hit_test_target_planet) &&
+            (gm->m_current_target.index == idx))
+        {
+            if (sprite_draw_scaled(&gm->m_selection_sprite, g,
+                gm->m_planets[idx].x, gm->m_planets[idx].y,
+                gm->m_planets[idx].w, gm->m_planets[idx].h))
+            {
+                ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw selection sprite\n");
+                return 1;
+            }
+        }
     }
     
     for (idx = 0; idx < 1; idx++)
@@ -250,6 +269,18 @@ int game_render(game * gm, graphics * g)
         {
             ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw ship %d\n", idx);
             return 1;
+        }
+        
+        if ((gm->m_current_target.type == hit_test_target_ship) &&
+            (gm->m_current_target.index == idx))
+        {
+            if (sprite_draw_scaled(&gm->m_selection_sprite, g,
+                gm->m_ships[idx].x, gm->m_ships[idx].y,
+                gm->m_ships[idx].w, gm->m_ships[idx].h))
+            {
+                ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw selection sprite\n");
+                return 1;
+            }
         }
     }
 
@@ -265,6 +296,12 @@ int game_render(game * gm, graphics * g)
 int game_cleanup(game * gm)
 {
     int idx = 0;
+    
+    if (sprite_cleanup(&gm->m_selection_sprite))
+    {
+        ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to clean-up selection sprite\n");
+        return 1;
+    }
     
     if (sprite_cleanup(&gm->m_cursor_sprite))
     {
