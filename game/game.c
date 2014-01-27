@@ -36,7 +36,12 @@ int game_init(game * gm, engine * e)
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize sprite sheet\n");
         return 1;
     }
-    
+	if (font_sheet_init(&gm->m_font, g, "assets/font_tilemap.png"))
+	{
+		ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to initialize font sheet\n");
+		return 1;
+	}
+
     for (idx = 0; idx < 2; idx++)
     {
         planet_type type;
@@ -220,7 +225,8 @@ int game_update(game * gm, engine * e, unsigned int dt)
 int game_render(game * gm, graphics * g)
 {
     int idx = 0;
-    
+	SDL_Color BLACK_COLOR = { 0, 0, 0, 0 };
+
     for (idx = 0; idx < 2; idx++)
     {
         if (planet_draw(&gm->m_planets[idx], g))
@@ -260,6 +266,8 @@ int game_render(game * gm, graphics * g)
 		(void)x; (void)y;
 		//SDL_FillRect(g,x....y....);
 	}
+
+	drawString(&gm->m_font, g, "hello meow", 5, 5, 10, BLACK_COLOR);
 
     if (sprite_draw(&gm->m_cursor_sprite, g, gm->m_cursor_x, gm->m_cursor_y))
     {

@@ -105,6 +105,8 @@ int graphics_init(graphics * g, int width, int height)
         return 1;
     }
     
+
+
     return 0;
 }
 
@@ -344,4 +346,55 @@ int sprite_cleanup(sprite * s)
     }
     
     return 0;
+}
+
+int font_sheet_init(sprite_sheet * fs, graphics *g, char * path)
+{
+	SDL_Surface * image;
+	image = IMG_Load(path);
+	if (image == NULL)
+	{
+		ENGINE_DEBUG_LOG_ERROR("Couldn't load font sheet [%s]\n", SDL_GetError());
+		return 1;
+	}
+	fs->width = image->w;
+	fs->height = image->h;
+
+	fs->m_texture = SDL_CreateTextureFromSurface(g->m_renderer, image);
+	SDL_FreeSurface(image);
+
+	if (fs->m_texture == NULL)
+	{
+		ENGINE_DEBUG_LOG_ERROR("Couldn't create texture [%s]\n", SDL_GetError());
+		return 1;
+	}
+
+	return 0;
+}
+
+
+//depends on imported font png
+const int expected_width = 10;
+const int expected_height = 16;
+const int height_fix = 1;
+const int tiles_per_row = 16;
+
+int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size, SDL_Color color)
+{
+	SDL_Rect dstRect = { x, y , expected_width, expected_height };
+	int x_cord = (DrawChar% tiles_per_row) * expected_width;
+	int y_cord = (DrawChar / tiles_per_row) * (expected_height+height_fix);
+	SDL_Rect srcRect = { x_cord, y_cord, expected_width, expected_height + height_fix };
+	SDL_RenderCopy(g->m_renderer, font_sheet->m_texture, &srcRect, &dstRect);
+
+	return 0;
+}
+
+int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color color)
+{
+	int idx;
+	int len_s = strlen(DrawStr);
+	for (idx = 0; idx < len_s;idx++)
+		drawChar(font_sheet, g, DrawStr[idx], x += expected_width, y, size, color);
+	return 0;
 }
