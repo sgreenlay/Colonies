@@ -304,11 +304,8 @@ int sprite_draw(sprite * s, graphics *g, int x, int y)
     return 0;
 }
 
-int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, float scale)
+int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, int w, int h)
 {
-    int w = s->width * scale;
-    int h = s->height * scale;
-    
     x = x - w / 2;
     y = y - h / 2;
 
@@ -320,11 +317,8 @@ int sprite_draw_scaled(sprite * s, graphics *g, int x, int y, float scale)
     return 0;
 }
 
-int sprite_draw_scaled_and_rotated(sprite * s, graphics *g, int x, int y, float scale, float rotation)
+int sprite_draw_scaled_and_rotated(sprite * s, graphics *g, int x, int y, int w, int h, float rotation)
 {
-    int w = s->width * scale;
-    int h = s->height * scale;
-    
     SDL_Point center = { w / 2, h / 2 };
     
     x = x - center.x;

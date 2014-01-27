@@ -9,6 +9,7 @@ typedef struct _sprite_mapping {
 typedef enum {
     sprite_map_error,
 	sprite_map_cursor,
+    sprite_map_selection,
     sprite_map_alien_planet,
     sprite_map_human_planet,
     sprite_map_colony_ship,
@@ -25,6 +26,7 @@ static const sprite_mapping map[] = {
     /*  x,   y,   w,   h*/
     {   0,   0,   0,   0 }, /* error */
 	{   0, 192,  16,  16 }, /* sprite_map_cursor */
+    {  16, 192,  64,  64 }, /* sprite_map_selection */
     { 128,   0, 128, 128 }, /* alien_planet */
     {   0,   0, 128, 128 }, /* human_planet */
     {   0, 128,  64,  64 }, /* colony_ship */

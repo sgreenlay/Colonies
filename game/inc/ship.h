@@ -39,6 +39,7 @@ int ship_init(ship * sh, game * gm, int x, int y, int w, int h, ship_type type);
 int ship_update(ship * sh, game * gm, float elapsed);
 int ship_fly_to(ship * sh, int x, int y, int event);
 int ship_draw(ship * sh, graphics * g);
+int ship_hit_test(ship * sh, int x, int y);
 int ship_cleanup(ship * sh);
 
 #endif
