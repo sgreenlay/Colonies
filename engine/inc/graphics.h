@@ -77,6 +77,7 @@ typedef struct _sprite {
 // private
     int m_offset_x, m_offset_y;
     SDL_Texture * m_texture;
+    int m_from_sheet;
 } sprite;
 
 

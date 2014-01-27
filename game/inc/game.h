@@ -12,6 +12,10 @@
 typedef struct _game {
 // private
     sprite_sheet m_sprites;
+    
+    int m_cursor_x, m_cursor_y;
+    sprite m_cursor_sprite;
+    
     planet m_planets[2];
     ship m_ships[1];
 } game;

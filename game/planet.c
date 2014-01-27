@@ -2,7 +2,6 @@
 #include "planet.h"
 
 #include "sprite_mapping.h"
-
 #include "game.h"
 
 //

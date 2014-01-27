@@ -270,6 +270,8 @@ int sprite_init(sprite * s, graphics *g, int width, int height, char * path)
         return 1;
     }
     
+    s->m_from_sheet = 0;
+    
     return 0;
 }
 
@@ -282,6 +284,7 @@ int sprite_init_from_sheet(sprite * s, sprite_sheet *ss, int x, int y, int width
     s->m_offset_y = y;
     
     s->m_texture = ss->m_texture;
+    s->m_from_sheet = 1;
     
     return 0;
 }
@@ -335,7 +338,7 @@ int sprite_draw_scaled_and_rotated(sprite * s, graphics *g, int x, int y, float 
 
 int sprite_cleanup(sprite * s)
 {
-    if (s->m_texture)
+    if (!(s->m_from_sheet) && s->m_texture)
     {
         SDL_DestroyTexture(s->m_texture);
     }
