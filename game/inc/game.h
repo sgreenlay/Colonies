@@ -9,6 +9,7 @@
 #include "planet.h"
 #include "ship.h"
 
+
 typedef enum _hit_test_target_type {
     hit_test_target_none,
     hit_test_target_ship,
@@ -19,6 +20,16 @@ typedef struct _hit_test_target {
     hit_test_target_type type;
     int index;
 } hit_test_target;
+
+typedef enum _menu_status {
+	MENU_CREDITS, //transition to main
+	MENU_MAIN,    //either creds, game, or quit
+	MENU_GAME,    //transition to pause, win, lose
+	MENU_PAUSE,   //game, quit
+	MENU_WIN,     //main
+	MENU_LOSE,    //main
+	MENU_QUIT     //nobody returns
+} menu_status;
 
 typedef struct _game {
 // private
@@ -36,6 +47,7 @@ typedef struct _game {
 
     sprite m_selection_sprite;
     hit_test_target m_current_target;
+	menu_status game_status;
 } game;
 
 
@@ -53,6 +65,10 @@ game * create_game();
 int game_init(game * gm, engine * e);
 int game_update(game * gm, engine * e, unsigned int dt);
 int game_render(game * gm, graphics * g);
+int game_render_ships(game *gm, graphics* g);
+int game_render_planets(game *gm, graphics* g);
+
+int game_update_ships(game * gm, engine * e, int is_mouse_left_down, int is_mouse_right_down, unsigned int dt);
 hit_test_target game_hit_test(game * gm, int x, int y);
 int game_cleanup(game * gm);
 

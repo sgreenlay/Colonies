@@ -109,7 +109,7 @@ int sprite_cleanup(sprite * s);
 void setFontColor(graphics * gfx, int r, int g, int b);
 int font_sheet_init(sprite_sheet * fs, graphics *g, char * path);
 int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size);
-int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size);
+int drawString(sprite_sheet* font_sheet, graphics * g, const char* DrawStr, int x, int y, int size);
 
 
 #endif

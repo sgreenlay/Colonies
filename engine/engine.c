@@ -98,7 +98,8 @@ void engine_run(engine * e, game * gm)
             return;
         }
         
-        game_update(gm, e, dt);
+		if (game_update(gm, e, dt) != 0)
+			return;
         
         if (graphics_draw(&e->m_graphics, gm))
         {

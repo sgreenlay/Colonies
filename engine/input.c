@@ -65,10 +65,6 @@ int input_poll(input * i)
 
 int input_get_mouse_state(input * i, int * is_left_down, int * is_right_down, int * x, int * y)
 {
-    //const Uint8 * keystate = SDL_GetKeyboardState(NULL);
-    
-    //*is_left_down = (keystate[SDL_GetScancodeFromKey(SDL_BUTTON_LEFT)] != 0);
-    
     Uint32 buttons_state = SDL_GetMouseState(x, y);
 	*is_left_down = (0!=(buttons_state & SDL_BUTTON(1))) ;
 	*is_right_down = (0 != (buttons_state & SDL_BUTTON(3)));
@@ -76,7 +72,7 @@ int input_get_mouse_state(input * i, int * is_left_down, int * is_right_down, in
     return 0;
 }
 
-int input_is_key_down(input * i, Key k)
+int input_is_key_down(input * i, Key k, char a_z)
 {
 	//TODO: call this once, save the keystate.
     const Uint8 * keystate = SDL_GetKeyboardState(NULL);
@@ -91,6 +87,14 @@ int input_is_key_down(input * i, Key k)
             return (keystate[SDL_GetScancodeFromKey(SDLK_LEFT)] != 0);
         case Key_Right:
             return (keystate[SDL_GetScancodeFromKey(SDLK_RIGHT)] != 0);
+		case Key_Space:
+			return (keystate[SDL_GetScancodeFromKey(SDLK_SPACE)] != 0);
+		case Key_Enter:
+			return (keystate[SDL_GetScancodeFromKey(SDLK_RETURN)] != 0);
+		case Key_Tab:
+			return (keystate[SDL_GetScancodeFromKey(SDLK_TAB)] != 0);
+		case Key_Char:
+			return (keystate[SDL_GetScancodeFromKey((int)a_z)] != 0);
         default:
             break;
     }

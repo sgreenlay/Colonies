@@ -392,7 +392,7 @@ int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y
 	return 0;
 }
 
-int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size)
+int drawString(sprite_sheet* font_sheet, graphics * g, const char* DrawStr, int x, int y, int size)
 {
 	int idx;
 	int len_s = strlen(DrawStr);
