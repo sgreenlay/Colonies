@@ -55,8 +55,8 @@ int game_init(game * gm, engine * e)
             case 0:
                 type = planet_type_human;
                 
-                x = g->width / 4;
-                y = g->height / 2;
+                x = g->width / 5;
+                y = 2 * g->height / 3;
                 w = 128;
                 h = 128;
                 
@@ -64,8 +64,8 @@ int game_init(game * gm, engine * e)
             case 1:
                 type = planet_type_alien;
                 
-                x = 3 * g->width / 4;
-                y = g->height / 2;
+                x = 4 * g->width / 5;
+                y = g->height / 3;
                 w = 128;
                 h = 128;
                 
@@ -103,11 +103,7 @@ int game_init(game * gm, engine * e)
     for (idx = 0; idx < gm->m_ship_count; idx++)
     {
         ship_type type;
-        
-        int x, y;
-        int dest_x, dest_y;
-        int event;
-        int w, h;
+        int x, y, w, h;
         
         switch (idx)
         {
@@ -116,11 +112,6 @@ int game_init(game * gm, engine * e)
                 
                 x = gm->m_planets[idx].x;
                 y = gm->m_planets[idx].y;
-                
-                dest_x = gm->m_planets[idx + 1].x;
-                dest_y = gm->m_planets[idx + 1].y;
-                
-                event = idx + 2;
                 
                 w = 64;
                 h = 64;
@@ -240,6 +231,13 @@ int game_update(game * gm, engine * e, unsigned int dt)
         
         if (evt != 0)
         {
+            planet * planet = &gm->m_planets[evt - 1];
+            
+            if (planet->type != planet_type_human)
+            {
+                planet_set_type(planet, gm, planet_type_human);
+            }
+            
             ENGINE_DEBUG_LOG_ERROR("Ship %d arrived at planet %d\n", idx, evt - 1);
         }
     }

@@ -147,7 +147,7 @@ int ship_update(ship * sh, game * gm, float elapsed)
     }
     else if ((sh->dx != 0) || (sh->dy != 0))
     {
-        sh->x += 20.0f * sh->dx * elapsed;
+        sh->x += 30.0f * sh->dx * elapsed;
         
         if (((sh->dx < 0) && (sh->x <= sh->dest_x)) ||
             ((sh->dx > 0) && (sh->x >= sh->dest_x)))
@@ -156,7 +156,7 @@ int ship_update(ship * sh, game * gm, float elapsed)
             sh->dx = 0;
         }
         
-        sh->y += 20.0f * sh->dy * elapsed;
+        sh->y += 30.0f * sh->dy * elapsed;
         
         if (((sh->dy < 0) && (sh->y <= sh->dest_y)) ||
             ((sh->dy > 0) && (sh->y >= sh->dest_y)))

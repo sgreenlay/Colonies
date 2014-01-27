@@ -6,6 +6,7 @@
 #include "graphics.h"
 
 typedef enum {
+    planet_type_none,
     planet_type_human,
     planet_type_alien
 } planet_type;
@@ -25,6 +26,13 @@ typedef struct _planet {
 //
 
 planet * create_planet();
+
+
+//
+// Setters
+//
+
+int planet_set_type(planet * pl, game * gm, planet_type type);
 
 
 //
