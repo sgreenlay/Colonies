@@ -21,6 +21,7 @@ typedef struct _graphics {
     SDL_Renderer * m_renderer;
     SDL_Surface * m_screen;
     SDL_Texture * m_texture;
+	SDL_Color font_color;
 } graphics;
 
 
@@ -104,9 +105,11 @@ int sprite_cleanup(sprite * s);
 // Font Drawing
 // #######################################################################################
 
+
+void setFontColor(graphics * gfx, int r, int g, int b);
 int font_sheet_init(sprite_sheet * fs, graphics *g, char * path);
-int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size, SDL_Color* color);
-int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size, SDL_Color* color);
+int drawChar(sprite_sheet* font_sheet, graphics * g, char DrawChar, int x, int y, int size);
+int drawString(sprite_sheet* font_sheet, graphics * g, char* DrawStr, int x, int y, int size);
 
 
 #endif
