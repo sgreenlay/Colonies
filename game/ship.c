@@ -1,6 +1,8 @@
 
 #include "ship.h"
 
+#include <math.h>
+
 #include "sprite_mapping.h"
 #include "game.h"
 
@@ -31,6 +33,7 @@ int ship_init(ship * sh, game * gm, int x, int y,int w,int h, ship_type type)
     sh->type = type;
     sh->dest_x = sh->x = x;
     sh->dest_y = sh->y = y;
+    sh->dest_r = sh->r = 0;
     
     sprite_mapping spm;
     
@@ -79,22 +82,46 @@ int ship_fly_to(ship * sh, int x, int y, int event)
             sh->dx = disp_x / disp_len;
             sh->dy = disp_y / disp_len;
             
+            sh->dest_r = atan2(sh->dy, sh->dx) * 180.0f / M_PI;
+            
             sh->m_event = event;
         }
         else
         {
-            sh->dx = 0;
-            sh->dy = 0;
-            
-            return event;
+            sh->dx = 0.0f;
+            sh->dy = 0.0f;
         }
     }
     else
     {
-        sh->dx = 0;
-        sh->dy = 0;
+        sh->dx = 0.0f;
+        sh->dy = 0.0f;
+    }
+    
+    if (sh->dest_r != sh->r)
+    {
+        float ccw = 0.0f;
+        float cw = 0.0f;
         
-        return event;
+        if (sh->r < sh->dest_r)
+        {
+            ccw = sh->dest_r - sh->r;
+            cw = 360 - ccw;
+        }
+        else
+        {
+            cw = sh->r - sh->dest_r;
+            ccw = 360 - ccw;
+        }
+        
+        if (ccw > cw)
+        {
+            sh->dr = -1.0f;
+        }
+        else
+        {
+            sh->dr = 1.0f;
+        }
     }
     
     return 0;
@@ -102,7 +129,23 @@ int ship_fly_to(ship * sh, int x, int y, int event)
 
 int ship_update(ship * sh, game * gm, float elapsed)
 {
-    if ((sh->x != sh->dest_x) || (sh->y != sh->dest_y))
+    if (sh->dr != 0)
+    {
+        sh->r += 90.0f * sh->dr * elapsed;
+        
+        if (sh->r >= 360.0f)
+        {
+            sh->r -= 360.0f;
+        }
+        
+        if (((sh->dr > 0) && (sh->r > sh->dest_r)) ||
+            ((sh->dr < 0) && (sh->r < sh->dest_r)))
+        {
+            sh->r = sh->dest_r;
+            sh->dr = 0;
+        }
+    }
+    else if ((sh->dx != 0) || (sh->dy != 0))
     {
         sh->x += 20.0f * sh->dx * elapsed;
         
@@ -145,7 +188,7 @@ int ship_hit_test(ship * sh, int x, int y)
 
 int ship_draw(ship * sh, graphics * g)
 {
-    if (sprite_draw(&sh->m_sprite, g, sh->x, sh->y))
+    if (sprite_draw_scaled_and_rotated(&sh->m_sprite, g, sh->x, sh->y, sh->w, sh->h, sh->r))
     {
         ENGINE_DEBUG_LOG_ERROR("ERROR: Failed to draw ship sprite\n");
         return 1;

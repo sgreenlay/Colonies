@@ -13,9 +13,12 @@ typedef enum {
 
 typedef struct _ship {
     float x, y;
-	int w, h; 
+    float r;
+    int w, h; 
     float dx, dy;
+    float dr;
     float dest_x, dest_y;
+    float dest_r;
     ship_type type;
     
 // private
